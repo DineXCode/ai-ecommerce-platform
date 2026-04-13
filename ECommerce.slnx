@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/backend/" />
+  <Folder Name="/backend/src/">
+    <Project Path="backend/src/ECommerce.API/ECommerce.API.csproj" />
+    <Project Path="backend/src/ECommerce.Core/ECommerce.Core.csproj" />
+    <Project Path="backend/src/ECommerce.Infrastructure/ECommerce.Infrastructure.csproj" />
+  </Folder>
+</Solution>
