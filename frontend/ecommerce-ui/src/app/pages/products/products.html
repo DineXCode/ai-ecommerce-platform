@@ -1,0 +1,17 @@
+<h1>AI E-Commerce Platform</h1>
+
+<div style="margin-bottom:20px;">
+  <input [(ngModel)]="name" placeholder="Product Name">
+  <input [(ngModel)]="price" type="number" placeholder="Price">
+
+  <button (click)="addProduct()">Add Product</button>
+</div>
+
+<hr>
+
+<h2>Total Products: {{ products.length }}</h2>
+
+<div *ngFor="let product of products; let i = index">
+  <h3>{{ i + 1 }}. {{ product.name }}</h3>
+  <p>₹{{ product.price }}</p>
+</div>

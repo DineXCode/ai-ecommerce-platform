@@ -1,28 +1,42 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ECommerce.Infrastructure.Data;
 using ECommerce.Core.Entities;
 
-namespace ECommerce.API.Controllers;
-
-[ApiController]
-[Route("api/[controller]")]
-public class ProductsController : ControllerBase
+namespace ECommerce.API.Controllers
 {
-    private static List<Product> products = new List<Product>
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ProductsController : ControllerBase
     {
-        new Product { Id = 1, Name = "Laptop", Price = 50000 },
-        new Product { Id = 2, Name = "Phone", Price = 20000 }
-    };
+        private readonly AppDbContext _context;
 
-    [HttpGet]
-    public IActionResult GetProducts()
-    {
-        return Ok(products);
-    }
+        public ProductsController(AppDbContext context)
+        {
+            _context = context;
+        }
 
-    [HttpPost]
-    public IActionResult AddProduct(Product product)
-    {
-        products.Add(product);
-        return Ok(product);
+        [HttpGet]
+        public async Task<IActionResult> GetProducts()
+        {
+            var products = await _context.Products.ToListAsync();
+
+            return Ok(products);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddProduct([FromBody] Product product)
+        {
+            if (product == null)
+            {
+                return BadRequest();
+            }
+
+            _context.Products.Add(product);
+
+            await _context.SaveChangesAsync();
+
+            return Ok(product);
+        }
     }
 }
