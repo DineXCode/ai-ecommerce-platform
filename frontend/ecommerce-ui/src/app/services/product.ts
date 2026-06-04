@@ -18,4 +18,13 @@ export class ProductService {
   addProduct(product: any): Observable<any> {
     return this.http.post(this.apiUrl, product);
   }
+
+  deleteProduct(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+  getRecommendations(productName: string) {
+  return this.http.get<any[]>(
+    `http://localhost:5006/api/recommendations/${productName}`
+  );
+}
 }
