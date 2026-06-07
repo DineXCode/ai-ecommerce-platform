@@ -1,0 +1,59 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ECommerce.Infrastructure.Data;
+using ECommerce.Core.Entities;
+
+namespace ECommerce.API.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class AuthController : ControllerBase
+    {
+        private readonly AppDbContext _context;
+
+        public AuthController(AppDbContext context)
+        {
+            _context = context;
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register(User user)
+        {
+            var existingUser = await _context.Users
+                .FirstOrDefaultAsync(x => x.Email == user.Email);
+
+            if (existingUser != null)
+            {
+                return BadRequest("Email already exists");
+            }
+
+            _context.Users.Add(user);
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = "Registration successful"
+            });
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(User login)
+        {
+            var user = await _context.Users
+                .FirstOrDefaultAsync(x =>
+                    x.Email == login.Email &&
+                    x.Password == login.Password);
+
+            if (user == null)
+            {
+                return Unauthorized(new
+                {
+                    message = "Invalid Email or Password"
+                });
+            }
+
+            return Ok(user);
+        }
+    }
+}

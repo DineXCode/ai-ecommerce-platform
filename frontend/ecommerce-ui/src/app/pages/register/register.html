@@ -1,0 +1,34 @@
+<h1>Create Account</h1>
+
+<input
+  [(ngModel)]="name"
+  placeholder="Full Name">
+
+<br><br>
+
+<input
+  [(ngModel)]="email"
+  placeholder="Email">
+
+<br><br>
+
+<input
+  [(ngModel)]="password"
+  type="password"
+  placeholder="Password">
+
+<br><br>
+
+<button (click)="register()">
+  Register
+</button>
+
+<br><br>
+
+<p>
+  Already have an account?
+</p>
+
+<a href="/login">
+  Login Here
+</a>

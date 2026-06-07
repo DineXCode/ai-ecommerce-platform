@@ -10,15 +10,25 @@ export class CartService {
 
   constructor(private http: HttpClient) {}
 
-  getCart() {
-    return this.http.get<any[]>(this.apiUrl);
+  getCart(userId: number) {
+    return this.http.get<any[]>(
+      `${this.apiUrl}/${userId}`
+    );
   }
 
-  addToCart(productId: number) {
-    return this.http.post(`${this.apiUrl}/${productId}`, {});
+  addToCart(
+    userId: number,
+    productId: number
+  ) {
+    return this.http.post(
+      `${this.apiUrl}/${userId}/${productId}`,
+      {}
+    );
   }
-  
+
   removeFromCart(id: number) {
-  return this.http.delete(`${this.apiUrl}/${id}`);
+    return this.http.delete(
+      `${this.apiUrl}/${id}`
+    );
   }
 }

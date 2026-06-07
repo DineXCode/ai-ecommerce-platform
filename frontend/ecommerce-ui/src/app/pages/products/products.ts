@@ -19,6 +19,8 @@ export class ProductsComponent implements OnInit {
 
   recommendations: string[] = [];
 
+  currentUser: any = null;
+
   name = '';
   price = 0;
 
@@ -29,6 +31,10 @@ export class ProductsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+
+    this.currentUser =
+      JSON.parse(localStorage.getItem('user') || 'null');
+
     this.loadProducts();
     this.loadCart();
   }
@@ -46,7 +52,14 @@ export class ProductsComponent implements OnInit {
   }
 
   loadCart() {
-    this.cartService.getCart().subscribe({
+
+  if (!this.currentUser) {
+    return;
+  }
+
+  this.cartService
+    .getCart(this.currentUser.id)
+    .subscribe({
       next: (data: any) => {
         this.cartItems = data;
       },
@@ -54,7 +67,7 @@ export class ProductsComponent implements OnInit {
         console.error('Cart Load Error:', err);
       }
     });
-  }
+}
 
   addProduct() {
     const product = {
@@ -87,29 +100,43 @@ export class ProductsComponent implements OnInit {
   }
 
   addToCart(productId: number, productName: string) {
-    this.cartService.addToCart(productId).subscribe({
+
+  if (!this.currentUser) {
+    alert('Please login first');
+    return;
+  }
+
+  this.cartService
+    .addToCart(
+      this.currentUser.id,
+      productId
+    )
+    .subscribe({
       next: () => {
+
         this.loadCart();
-        this.showRecommendations(productName);
+
+        this.showRecommendations(
+          productName
+        );
       },
       error: (err) => {
         console.error('Cart Error:', err);
       }
     });
-  }
-  removeFromCart(id: number) {
-
-  this.cartService.removeFromCart(id)
-    .subscribe({
-      next: () => {
-        this.loadCart();
-      },
-      error: (err) => {
-        console.error(err);
-      }
-    });
-
 }
+
+  removeFromCart(id: number) {
+    this.cartService.removeFromCart(id)
+      .subscribe({
+        next: () => {
+          this.loadCart();
+        },
+        error: (err) => {
+          console.error(err);
+        }
+      });
+  }
 
   showRecommendations(productName: string) {
     this.productService
@@ -130,5 +157,12 @@ export class ProductsComponent implements OnInit {
         total + (item.product?.price || 0) * item.quantity,
       0
     );
+  }
+
+  logout() {
+
+    localStorage.removeItem('user');
+
+    window.location.href = '/login';
   }
 }

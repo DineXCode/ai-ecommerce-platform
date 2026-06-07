@@ -16,28 +16,34 @@ namespace ECommerce.API.Controllers
             _context = context;
         }
 
-        // GET: api/cart
-        [HttpGet]
-        public async Task<IActionResult> GetCart()
+        // GET: api/cart/1
+        [HttpGet("{userId}")]
+        public async Task<IActionResult> GetCart(int userId)
         {
             var cartItems = await _context.CartItems
+                .Where(c => c.UserId == userId)
                 .Include(c => c.Product)
                 .ToListAsync();
 
             return Ok(cartItems);
         }
 
-        // POST: api/cart/1
-        [HttpPost("{productId}")]
-        public async Task<IActionResult> AddToCart(int productId)
+        // POST: api/cart/1/5
+        [HttpPost("{userId}/{productId}")]
+        public async Task<IActionResult> AddToCart(
+            int userId,
+            int productId)
         {
-            var product = await _context.Products.FindAsync(productId);
+            var product = await _context.Products
+                .FindAsync(productId);
 
             if (product == null)
                 return NotFound();
 
             var item = await _context.CartItems
-                .FirstOrDefaultAsync(x => x.ProductId == productId);
+                .FirstOrDefaultAsync(x =>
+                    x.UserId == userId &&
+                    x.ProductId == productId);
 
             if (item != null)
             {
@@ -47,6 +53,7 @@ namespace ECommerce.API.Controllers
             {
                 _context.CartItems.Add(new CartItem
                 {
+                    UserId = userId,
                     ProductId = productId,
                     Quantity = 1
                 });
@@ -64,12 +71,11 @@ namespace ECommerce.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> RemoveFromCart(int id)
         {
-            var item = await _context.CartItems.FindAsync(id);
+            var item = await _context.CartItems
+                .FindAsync(id);
 
             if (item == null)
-            {
                 return NotFound();
-            }
 
             _context.CartItems.Remove(item);
 
