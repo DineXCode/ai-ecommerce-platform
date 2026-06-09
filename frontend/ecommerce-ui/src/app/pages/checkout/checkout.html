@@ -1,0 +1,131 @@
+<div class="container mt-5">
+
+  <h1 class="mb-4">
+    🛍 Checkout
+  </h1>
+
+  <div class="row">
+
+    <!-- Left Side -->
+    <div class="col-lg-8">
+
+      <div class="card shadow mb-4">
+
+        <div class="card-header">
+
+          <h3>Products</h3>
+
+        </div>
+
+        <div class="card-body">
+
+          <div
+            *ngFor="let item of cartItems"
+            class="border rounded p-3 mb-3">
+
+            <h5>
+              {{ item.product?.name }}
+            </h5>
+
+            <p>
+              Quantity:
+              <strong>{{ item.quantity }}</strong>
+            </p>
+
+            <p>
+              Price:
+              ₹{{ item.product?.price }}
+            </p>
+
+            <p class="text-success fw-bold">
+
+              Subtotal:
+              ₹{{ item.product?.price * item.quantity }}
+
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Right Side -->
+    <div class="col-lg-4">
+
+      <div class="card shadow">
+
+        <div class="card-header">
+
+          <h3>Delivery Address</h3>
+
+        </div>
+
+        <div class="card-body">
+
+          <div class="mb-3">
+
+            <input
+              [(ngModel)]="name"
+              class="form-control"
+              placeholder="Full Name">
+
+          </div>
+
+          <div class="mb-3">
+
+            <input
+              [(ngModel)]="mobile"
+              class="form-control"
+              placeholder="Mobile Number">
+
+          </div>
+
+          <div class="mb-3">
+
+            <textarea
+              [(ngModel)]="address"
+              class="form-control"
+              rows="4"
+              placeholder="Full Address">
+            </textarea>
+
+          </div>
+
+          <div class="mb-3">
+
+            <input
+              [(ngModel)]="pincode"
+              class="form-control"
+              placeholder="Pincode">
+
+          </div>
+
+          <hr>
+
+          <h3 class="text-success">
+
+            Grand Total:
+            ₹{{ getTotalPrice() }}
+
+          </h3>
+
+          <button
+            class="btn btn-success btn-lg w-100 mt-3"
+            (click)="placeOrder()">
+
+            🚀 Place Order
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

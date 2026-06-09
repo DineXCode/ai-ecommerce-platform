@@ -17,25 +17,28 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(User user)
-        {
-            var existingUser = await _context.Users
-                .FirstOrDefaultAsync(x => x.Email == user.Email);
+public async Task<IActionResult> Register(User user)
+{
+    var existingUser = await _context.Users
+        .FirstOrDefaultAsync(x => x.Email == user.Email);
 
-            if (existingUser != null)
-            {
-                return BadRequest("Email already exists");
-            }
+    if (existingUser != null)
+    {
+        return BadRequest("Email already exists");
+    }
 
-            _context.Users.Add(user);
+    // Every newly registered user becomes a Customer
+    user.Role = "Customer";
 
-            await _context.SaveChangesAsync();
+    _context.Users.Add(user);
 
-            return Ok(new
-            {
-                message = "Registration successful"
-            });
-        }
+    await _context.SaveChangesAsync();
+
+    return Ok(new
+    {
+        message = "Registration successful"
+    });
+}
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(User login)
@@ -55,5 +58,22 @@ namespace ECommerce.API.Controllers
 
             return Ok(user);
         }
+        [HttpPut("make-admin/{email}")]
+public async Task<IActionResult> MakeAdmin(string email)
+{
+    var user = await _context.Users
+        .FirstOrDefaultAsync(x => x.Email == email);
+
+    if (user == null)
+    {
+        return NotFound();
+    }
+
+    user.Role = "Admin";
+
+    await _context.SaveChangesAsync();
+
+    return Ok(user);
+}
     }
 }

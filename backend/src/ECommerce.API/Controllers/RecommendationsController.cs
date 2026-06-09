@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml;
 
 namespace ECommerce.API.Controllers
 {
@@ -9,47 +10,73 @@ namespace ECommerce.API.Controllers
         [HttpGet("{productName}")]
         public IActionResult GetRecommendations(string productName)
         {
-            var recommendations = new List<string>();
-
-            switch (productName.ToLower())
+            try
             {
-                case "laptop":
-                    recommendations.AddRange(new[]
-                    {
-                        "Mouse",
-                        "Keyboard",
-                        "Laptop Bag"
-                    });
-                    break;
+                var filePath =
+                    @"C:\Users\dineb\ai-ecommerce-platform\database\ProductRecommendations.xlsx";
 
-                case "phone":
-                    recommendations.AddRange(new[]
+                if (!System.IO.File.Exists(filePath))
+                {
+                    return NotFound(new
                     {
-                        "Charger",
-                        "Power Bank",
-                        "Earbuds"
+                        Message = "Excel file not found",
+                        FilePath = filePath
                     });
-                    break;
+                }
 
-                case "sugar":
-                    recommendations.AddRange(new[]
-                    {
-                        "Tea",
-                        "Coffee",
-                        "Milk"
-                    });
-                    break;
+                ExcelPackage.License.SetNonCommercialPersonal("Dine");
 
-                default:
-                    recommendations.AddRange(new[]
+                using var package =
+                    new ExcelPackage(new FileInfo(filePath));
+
+                if (package.Workbook.Worksheets.Count == 0)
+                {
+                    return BadRequest(new
                     {
-                        "Popular Product 1",
-                        "Popular Product 2"
+                        Message = "No worksheets found in Excel file"
                     });
-                    break;
+                }
+
+                var worksheet =
+                    package.Workbook.Worksheets[0];
+
+                var recommendations =
+                    new List<string>();
+
+                int rowCount =
+                    worksheet.Dimension.Rows;
+
+                for (int row = 2; row <= rowCount; row++)
+                {
+                    string product =
+                        worksheet.Cells[row, 1].Text;
+
+                    if (product.Equals(
+                        productName,
+                        StringComparison.OrdinalIgnoreCase))
+                    {
+                        string recommendedProducts =
+                            worksheet.Cells[row, 2].Text;
+
+                        recommendations =
+                            recommendedProducts
+                            .Split(',')
+                            .Select(x => x.Trim())
+                            .ToList();
+
+                        break;
+                    }
+                }
+
+                return Ok(recommendations);
             }
-
-            return Ok(recommendations);
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = ex.Message
+                });
+            }
         }
     }
 }

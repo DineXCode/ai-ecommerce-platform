@@ -1,0 +1,17 @@
+.card{
+    border-radius:15px;
+    border:none;
+}
+
+.card-header{
+    font-weight:600;
+}
+
+input,
+textarea{
+    border-radius:10px !important;
+}
+
+.btn{
+    border-radius:10px;
+}

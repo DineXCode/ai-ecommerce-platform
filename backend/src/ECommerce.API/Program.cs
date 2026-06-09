@@ -8,9 +8,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// ✅ Correct SQLite configuration
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite("Data Source=ecommerce.db"));
+    options.UseSqlServer(
+    builder.Configuration.GetConnectionString("DefaultConnection")
+));
 
 builder.Services.AddCors(options =>
 {

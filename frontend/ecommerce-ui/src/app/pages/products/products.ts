@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
+import { Router } from '@angular/router';
 import { ProductService } from '../../services/product';
 import { CartService } from '../../services/cart';
 
@@ -20,25 +20,72 @@ export class ProductsComponent implements OnInit {
   recommendations: string[] = [];
 
   currentUser: any = null;
+  isAdmin = false;
 
   name = '';
   price = 0;
 
   constructor(
-    private productService: ProductService,
-    private cartService: CartService,
-    private cdr: ChangeDetectorRef
-  ) {}
+  private productService: ProductService,
+  private cartService: CartService,
+  private cdr: ChangeDetectorRef,
+  private router: Router
+) {}
 
   ngOnInit(): void {
 
-    this.currentUser =
-      JSON.parse(localStorage.getItem('user') || 'null');
+  this.currentUser =
+    JSON.parse(localStorage.getItem('user') || 'null');
 
-    this.loadProducts();
+  this.isAdmin =
+    this.currentUser?.role === 'Admin';
+
+  this.loadProducts();
+
+  if (!this.isAdmin) {
     this.loadCart();
   }
+}
+getProductImage(productName: string): string {
 
+  const images: any = {
+
+    'Microphone': '/images/microphone.jpg',
+
+    'Books': '/images/books.jpg',
+
+    'Chair': '/images/chair.jpg',
+
+    'Table': '/images/table.jpg',
+
+    'Laptop': '/images/laptop.jpg',
+
+    'Phone': '/images/phone.jpg',
+
+    'Camera': '/images/camera.jpg',
+
+    'Keyboard': '/images/keyboard.jpg',
+
+    'Mouse': '/images/mouse.jpg',
+
+    'Pillow': '/images/pillow.jpg',
+    'Shirts': '/images/shirt.jpg',
+    'Joystick': '/images/joystick.jpg'
+  };
+
+  return images[productName] ||
+         '/images/default.jpg';
+}
+goToCheckout() {
+
+  console.log('Checkout Clicked');
+
+  this.router.navigate(['/checkout'])
+    .then(success => {
+      console.log('Navigation Success:', success);
+    });
+
+}
   loadProducts() {
     this.productService.getProducts().subscribe({
       next: (data: any) => {
@@ -53,16 +100,19 @@ export class ProductsComponent implements OnInit {
 
   loadCart() {
 
-  if (!this.currentUser) {
-    return;
-  }
+  if (!this.currentUser || this.isAdmin) {
+  return;
+}
 
   this.cartService
     .getCart(this.currentUser.id)
     .subscribe({
       next: (data: any) => {
-        this.cartItems = data;
-      },
+  this.cartItems = [...data];
+  this.cdr.detectChanges();
+
+  console.log('Cart Loaded:', this.cartItems);
+},
       error: (err) => {
         console.error('Cart Load Error:', err);
       }
@@ -70,6 +120,11 @@ export class ProductsComponent implements OnInit {
 }
 
   addProduct() {
+
+  if (!this.isAdmin) {
+    alert('Only Admin can add products');
+    return;
+  }
     const product = {
       name: this.name,
       price: this.price
@@ -89,6 +144,11 @@ export class ProductsComponent implements OnInit {
   }
 
   deleteProduct(id: number) {
+
+  if (!this.isAdmin) {
+    alert('Only Admin can delete products');
+    return;
+  }
     this.productService.deleteProduct(id).subscribe({
       next: () => {
         this.loadProducts();
@@ -114,12 +174,14 @@ export class ProductsComponent implements OnInit {
     .subscribe({
       next: () => {
 
-        this.loadCart();
+  setTimeout(() => {
+    this.loadCart();
+  }, 200);
 
-        this.showRecommendations(
-          productName
-        );
-      },
+  this.showRecommendations(
+    productName
+  );
+},
       error: (err) => {
         console.error('Cart Error:', err);
       }
