@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProductService } from '../../services/product';
 import { CartService } from '../../services/cart';
+import { WishlistService } from '../../services/wishlist';
+import { DashboardService } from '../../services/dashboard';
 
 @Component({
   selector: 'app-products',
@@ -16,8 +18,9 @@ export class ProductsComponent implements OnInit {
 
   products: any[] = [];
   cartItems: any[] = [];
-
+  wishlistItems:any[] = [];
   recommendations: string[] = [];
+  dashboard: any = {};
 
   currentUser: any = null;
   isAdmin = false;
@@ -25,11 +28,15 @@ export class ProductsComponent implements OnInit {
   name = '';
   price = 0;
 
+  searchText = '';
+
   constructor(
   private productService: ProductService,
   private cartService: CartService,
   private cdr: ChangeDetectorRef,
-  private router: Router
+  private router: Router,
+  private wishlistService: WishlistService,
+  private dashboardService: DashboardService,
 ) {}
 
   ngOnInit(): void {
@@ -39,12 +46,20 @@ export class ProductsComponent implements OnInit {
 
   this.isAdmin =
     this.currentUser?.role === 'Admin';
-
+  if (this.isAdmin) {
+  this.loadDashboard();
+}  
   this.loadProducts();
 
   if (!this.isAdmin) {
     this.loadCart();
   }
+  if (!this.isAdmin) {
+
+  this.loadCart();
+
+  this.loadWishlist();
+}
 }
 getProductImage(productName: string): string {
 
@@ -76,6 +91,20 @@ getProductImage(productName: string): string {
   return images[productName] ||
          '/images/default.jpg';
 }
+loadDashboard() {
+
+  this.dashboardService
+      .getDashboard()
+      .subscribe({
+
+        next:(data:any)=>{
+
+          this.dashboard = data;
+
+        }
+
+      });
+}
 goToCheckout() {
 
   console.log('Checkout Clicked');
@@ -97,6 +126,40 @@ goToCheckout() {
       }
     });
   }
+  loadWishlist() {
+
+  this.wishlistService
+      .getWishlist(
+        this.currentUser.id
+      )
+      .subscribe({
+
+        next:(data:any)=>{
+
+          this.wishlistItems =
+            data;
+
+        }
+      });
+}
+
+addToWishlist(productId:number) {
+
+  this.wishlistService
+      .addToWishlist(
+        this.currentUser.id,
+        productId
+      )
+      .subscribe({
+
+        next:()=>{
+
+          this.loadWishlist();
+
+        }
+      });
+}
+
 
   loadCart() {
 
@@ -220,6 +283,30 @@ goToCheckout() {
       0
     );
   }
+removeWishlist(id:number) {
+
+  this.wishlistService
+      .removeWishlist(id)
+      .subscribe({
+
+        next:()=>{
+
+          this.loadWishlist();
+
+        }
+      });
+}
+  filteredProducts() {
+
+  return this.products.filter(product =>
+    product.name
+      .toLowerCase()
+      .includes(
+        this.searchText.toLowerCase()
+      )
+  );
+
+}
 
   logout() {
 
