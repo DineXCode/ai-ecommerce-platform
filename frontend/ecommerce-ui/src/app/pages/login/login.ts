@@ -21,28 +21,35 @@ export class LoginComponent {
 
   login() {
 
-    const user = {
-      email: this.email,
-      password: this.password
-    };
+  const loginData = {
+    email: this.email,
+    password: this.password
+  };
 
-    this.authService.login(user).subscribe({
-      next: (response: any) => {
+  this.authService
+    .login(loginData)
+    .subscribe({
+      next: (res:any) => {
 
-        // Save logged-in user
         localStorage.setItem(
-          'user',
-          JSON.stringify(response)
+          'token',
+          res.token
         );
 
-        alert('Login Successful');
+        localStorage.setItem(
+          'user',
+          JSON.stringify({
+            id: res.userId,
+            name: res.name,
+            role: res.role
+          })
+        );
 
         this.router.navigate(['/products']);
       },
-
-      error: () => {
-        alert('Invalid Email or Password');
+      error: (err:any) => {
+        console.error(err);
       }
     });
-  }
+}
 }

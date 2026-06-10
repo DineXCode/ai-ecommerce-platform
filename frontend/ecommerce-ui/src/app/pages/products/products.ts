@@ -21,13 +21,17 @@ export class ProductsComponent implements OnInit {
   wishlistItems:any[] = [];
   recommendations: string[] = [];
   dashboard: any = {};
-
+  users: any[] = [];
   currentUser: any = null;
   isAdmin = false;
+  adminProducts: any[] = [];
 
+  adminCartItems: any[] = [];
+
+  adminWishlist: any[] = [];
   name = '';
   price = 0;
-
+  selectedView = '';
   searchText = '';
 
   constructor(
@@ -60,6 +64,57 @@ export class ProductsComponent implements OnInit {
 
   this.loadWishlist();
 }
+}
+showUsers() {
+
+  this.selectedView = 'users';
+
+  this.dashboardService
+      .getUsers()
+      .subscribe(data => {
+
+        this.users = data;
+
+      });
+}
+
+showProducts() {
+
+  this.selectedView = 'products';
+
+  this.dashboardService
+      .getProducts()
+      .subscribe(data => {
+
+        this.adminProducts = data;
+
+      });
+}
+
+showCartItems() {
+
+  this.selectedView = 'cart';
+
+  this.dashboardService
+      .getCartItems()
+      .subscribe(data => {
+
+        this.adminCartItems = data;
+
+      });
+}
+
+showWishlist() {
+
+  this.selectedView = 'wishlist';
+
+  this.dashboardService
+      .getWishlist()
+      .subscribe(data => {
+
+        this.adminWishlist = data;
+
+      });
 }
 getProductImage(productName: string): string {
 
