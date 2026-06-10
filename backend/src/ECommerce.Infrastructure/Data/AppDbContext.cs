@@ -17,6 +17,8 @@ public class AppDbContext : DbContext
     public DbSet<User> Users { get; set; }
 
     public DbSet<WishlistItem> WishlistItems { get; set; }
+
+    public DbSet<ProductRating> ProductRatings { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
 {
     modelBuilder.Entity<Product>()

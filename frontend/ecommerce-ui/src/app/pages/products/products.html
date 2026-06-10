@@ -171,8 +171,46 @@
 
         <div class="card-body">
           <h5 class="card-title">{{ product.name }}</h5>
-          <p class="card-text fs-5 fw-bold text-success">₹{{ product.price }}</p>
-          <div class="mb-3">★★★★★</div>
+          <p class="card-text fs-5 fw-bold text-success">
+  ₹{{ product.price }}
+</p>
+
+<div class="mb-2">
+
+  ⭐ {{ product.averageRating || 0 }}
+
+</div>
+
+<select
+  *ngIf="!isAdmin"
+  class="form-select mb-2"
+  (change)="rateProduct(product.id, $any($event.target).value)">
+
+  <option value="">
+    Rate Product
+  </option>
+
+  <option value="1">
+    ⭐
+  </option>
+
+  <option value="2">
+    ⭐⭐
+  </option>
+
+  <option value="3">
+    ⭐⭐⭐
+  </option>
+
+  <option value="4">
+    ⭐⭐⭐⭐
+  </option>
+
+  <option value="5">
+    ⭐⭐⭐⭐⭐
+  </option>
+
+</select>
 
           <!-- Customer buttons -->
           <div *ngIf="!isAdmin">

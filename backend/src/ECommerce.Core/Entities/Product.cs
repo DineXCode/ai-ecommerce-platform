@@ -9,7 +9,9 @@ public class Product
     public string Category { get; set; } = string.Empty;
     public string ImageUrl { get; set; } = "    ";
     public int StockQuantity { get; set; }
-    public double AverageRating { get; set; }
+    public double AverageRating { get; set; } =0;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public bool IsActive { get; set; } = true;
+
+    public ICollection<ProductRating>? Ratings { get; set; }
 }

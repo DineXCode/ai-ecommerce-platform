@@ -6,7 +6,7 @@ import { ProductService } from '../../services/product';
 import { CartService } from '../../services/cart';
 import { WishlistService } from '../../services/wishlist';
 import { DashboardService } from '../../services/dashboard';
-
+import { RatingService } from '../../services/rating';
 @Component({
   selector: 'app-products',
   standalone: true,
@@ -41,6 +41,7 @@ export class ProductsComponent implements OnInit {
   private router: Router,
   private wishlistService: WishlistService,
   private dashboardService: DashboardService,
+  private ratingService: RatingService
 ) {}
 
   ngOnInit(): void {
@@ -360,6 +361,40 @@ removeWishlist(id:number) {
         this.searchText.toLowerCase()
       )
   );
+
+}
+  rateProduct(
+  productId: number,
+  rating: number
+) {
+
+  this.ratingService
+      .addRating({
+
+        userId: this.currentUser.id,
+
+        productId: productId,
+
+        rating: +rating
+
+      })
+      .subscribe({
+
+        next: () => {
+
+          this.loadProducts();
+
+          alert('Rating submitted successfully');
+
+        },
+
+        error: (err) => {
+
+          console.error(err);
+
+        }
+
+      });
 
 }
 
