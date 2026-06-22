@@ -1,0 +1,95 @@
+<div class="container mt-5" *ngIf="product">
+
+  <div class="row">
+
+    <!-- Product Image -->
+    <div class="col-md-5">
+
+      <img
+        [src]="product.imageUrl"
+        [alt]="product.name"
+        class="img-fluid rounded shadow w-100">
+
+    </div>
+
+    <!-- Product Details -->
+    <div class="col-md-7">
+
+      <h1 class="fw-bold">
+        {{ product.name }}
+      </h1>
+
+      <div class="mb-3">
+
+        ⭐ {{ product.averageRating || 0 }}
+
+      </div>
+
+      <h2 class="text-success">
+
+        ₹{{ product.price }}
+
+      </h2>
+
+      <span class="badge bg-primary mb-3">
+
+        {{ product.category }}
+
+      </span>
+
+      <hr>
+
+      <h4>Description</h4>
+
+      <p class="fs-5">
+
+        {{ product.description }}
+
+      </p>
+      <hr>
+
+<hr>
+
+<h4>About This Item</h4>
+<p>
+  {{ product.aboutItem }}
+</p>
+
+      <p>
+
+        <strong>Stock Available:</strong>
+        {{ product.stockQuantity }}
+
+      </p>
+
+      <div class="mt-4">
+
+        <button
+          class="btn btn-primary btn-lg me-2"
+          (click)="addToCart()">
+
+          🛒 Add To Cart
+
+        </button>
+
+        <button
+          class="btn btn-success btn-lg"
+          (click)="buyNow()">
+
+          ⚡ Buy Now
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div *ngIf="!product" class="text-center mt-5">
+
+  <h3>Loading Product...</h3>
+
+</div>

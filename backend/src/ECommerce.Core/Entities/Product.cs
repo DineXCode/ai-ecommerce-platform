@@ -8,6 +8,7 @@ public class Product
     public decimal Price { get; set; }
     public string Category { get; set; } = string.Empty;
     public string ImageUrl { get; set; } = "    ";
+    public string? AboutItem { get; set; }
     public int StockQuantity { get; set; }
     public double AverageRating { get; set; } =0;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

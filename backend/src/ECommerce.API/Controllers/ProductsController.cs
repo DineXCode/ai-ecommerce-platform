@@ -58,5 +58,39 @@ namespace ECommerce.API.Controllers
                 Message = "Product deleted successfully"
             });
         }
+        [HttpGet("{id}")]
+public async Task<IActionResult> GetProduct(int id)
+{
+    var product = await _context.Products
+        .FirstOrDefaultAsync(x => x.Id == id);
+
+    if(product == null)
+        return NotFound();
+
+    return Ok(product);
+}
+[HttpPut("{id}")]
+public async Task<IActionResult> UpdateProduct(
+    int id,
+    Product updatedProduct)
+{
+    var product =
+        await _context.Products.FindAsync(id);
+
+    if (product == null)
+        return NotFound();
+
+    product.Name = updatedProduct.Name;
+    product.Description = updatedProduct.Description;
+    product.Price = updatedProduct.Price;
+    product.Category = updatedProduct.Category;
+    product.ImageUrl = updatedProduct.ImageUrl;
+    product.StockQuantity = updatedProduct.StockQuantity;
+    product.AboutItem = updatedProduct.AboutItem;
+
+    await _context.SaveChangesAsync();
+
+    return Ok(product);
+}
     }
 }

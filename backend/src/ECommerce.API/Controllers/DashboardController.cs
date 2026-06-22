@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ECommerce.Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ECommerce.API.Controllers;
 
@@ -14,7 +15,7 @@ public class DashboardController : ControllerBase
     {
         _context = context;
     }
-
+    
     [HttpGet]
     public IActionResult GetDashboard()
     {
@@ -26,13 +27,14 @@ public class DashboardController : ControllerBase
             TotalWishlistItems = _context.WishlistItems.Count()
         });
     }
-
+    [Authorize(Roles = "Admin")]
     [HttpGet("users")]
     public IActionResult GetUsers()
     {
         return Ok(_context.Users.ToList());
     }
 
+    
     [HttpGet("products")]
     public IActionResult GetProducts()
     {

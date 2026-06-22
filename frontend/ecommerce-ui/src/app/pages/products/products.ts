@@ -7,10 +7,15 @@ import { CartService } from '../../services/cart';
 import { WishlistService } from '../../services/wishlist';
 import { DashboardService } from '../../services/dashboard';
 import { RatingService } from '../../services/rating';
+import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule
+  ],
   templateUrl: './products.html',
   styleUrls: ['./products.css']
 })
@@ -33,6 +38,14 @@ export class ProductsComponent implements OnInit {
   price = 0;
   selectedView = '';
   searchText = '';
+  description = '';
+  aboutItem = '';
+
+imageUrl = '';
+
+category = '';
+
+stockQuantity = 0;
 
   constructor(
   private productService: ProductService,
@@ -56,9 +69,7 @@ export class ProductsComponent implements OnInit {
 }  
   this.loadProducts();
 
-  if (!this.isAdmin) {
-    this.loadCart();
-  }
+  
   if (!this.isAdmin) {
 
   this.loadCart();
@@ -245,9 +256,22 @@ addToWishlist(productId:number) {
     return;
   }
     const product = {
-      name: this.name,
-      price: this.price
-    };
+
+  name: this.name,
+
+  price: this.price,
+
+  description: this.description,
+
+  aboutItem: this.aboutItem,
+
+  imageUrl: this.imageUrl,
+
+  category: this.category,
+
+  stockQuantity: this.stockQuantity
+
+};
 
     this.productService.addProduct(product).subscribe({
       next: () => {
@@ -255,6 +279,11 @@ addToWishlist(productId:number) {
 
         this.name = '';
         this.price = 0;
+        this.description = '';
+        this.imageUrl = '';
+        this.category = '';
+        this.stockQuantity = 0;
+        this.aboutItem = '';
       },
       error: (err) => {
         console.error('POST Error:', err);
@@ -277,7 +306,27 @@ addToWishlist(productId:number) {
       }
     });
   }
+saveAbout(product: any) {
+  console.log('Saving About Section for Product:', product);
+  this.productService
+      .updateProduct(product.id, product)
+      .subscribe({
 
+        next: () => {
+
+          alert('About section saved');
+
+        },
+
+        error: (err) => {
+
+          console.error(err);
+
+        }
+
+      });
+
+}
   addToCart(productId: number, productName: string) {
 
   if (!this.currentUser) {
@@ -307,6 +356,9 @@ addToWishlist(productId:number) {
     });
 }
 
+viewProduct(id: number) {
+  this.router.navigate(['/product', id]);
+}
   removeFromCart(id: number) {
     this.cartService.removeFromCart(id)
       .subscribe({
@@ -318,6 +370,9 @@ addToWishlist(productId:number) {
         }
       });
   }
+  
+
+
 
   showRecommendations(productName: string) {
     this.productService
