@@ -6,35 +6,22 @@ import { HttpClient } from '@angular/common/http';
 })
 export class WishlistService {
 
-  private apiUrl =
-    'http://localhost:5006/api/wishlist';
+  private apiUrl = 'http://localhost:5006/api/wishlist';
 
-  constructor(
-    private http: HttpClient
-  ) {}
+  constructor(private http: HttpClient) {}
 
-  getWishlist(userId:number) {
-
-    return this.http.get<any[]>(
-      `${this.apiUrl}/${userId}`
-    );
+  getWishlist(userId: number) {
+    return this.http.get(`${this.apiUrl}/${userId}`);
   }
 
-  addToWishlist(
-    userId:number,
-    productId:number
-  ) {
-
+  addToWishlist(userId: number, productId: number) {
     return this.http.post(
       `${this.apiUrl}/${userId}/${productId}`,
       {}
     );
   }
 
-  removeWishlist(id:number) {
-
-    return this.http.delete(
-      `${this.apiUrl}/${id}`
-    );
+  removeWishlist(id: number) {
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }

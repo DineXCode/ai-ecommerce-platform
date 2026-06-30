@@ -1,1 +1,35 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container">
+
+    <a class="navbar-brand" routerLink="/products">
+      AI E-Commerce
+    </a>
+
+    <div class="navbar-nav ms-auto align-items-center gap-1">
+
+      <a class="nav-link" routerLink="/products">
+        Products
+      </a>
+
+      <a class="nav-link" routerLink="/cart">
+        🛒 Cart
+      </a>
+
+      <a class="nav-link" routerLink="/wishlist">
+        ❤️ Wishlist
+      </a>
+
+      <a class="nav-link" routerLink="/orders">
+        📦 Orders
+      </a>
+
+      <a class="nav-link" routerLink="/profile">
+        👤 {{ currentUser?.name || 'Profile' }}
+      </a>
+
+    </div>
+
+  </div>
+</nav>
+
 <router-outlet></router-outlet>

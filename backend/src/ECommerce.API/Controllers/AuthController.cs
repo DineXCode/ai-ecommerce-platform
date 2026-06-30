@@ -68,7 +68,20 @@ public class AuthController : ControllerBase
             name   = user.Name
         });
     }
+    // PUT api/auth/update-name
+[HttpPut("update-name")]
+public async Task<IActionResult> UpdateName([FromBody] UpdateNameDto dto)
+{
+    var user = await _context.Users.FindAsync(dto.UserId);
 
+    if (user is null)
+        return NotFound("User not found.");
+
+    user.Name = dto.NewName;
+    await _context.SaveChangesAsync();
+
+    return Ok(new { message = "Name updated successfully.", name = user.Name });
+}
     // -------------------------------------------------------------------------
     // PUT api/auth/make-admin/{email}   — Admin only ✅ was unauthenticated
     // -------------------------------------------------------------------------

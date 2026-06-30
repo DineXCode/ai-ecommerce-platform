@@ -16,7 +16,12 @@ export class AuthService {
       user
     );
   }
-
+  updateName(userId: number, newName: string) {
+  return this.http.put('http://localhost:5006/api/auth/update-name', {
+    userId,
+    newName
+  });
+}
   login(user: any) {
     return this.http.post(
       `${this.apiUrl}/login`,

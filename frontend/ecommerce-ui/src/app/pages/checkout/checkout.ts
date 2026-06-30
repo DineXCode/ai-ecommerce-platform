@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ChangeDetectorRef } from '@angular/core';
 import { CartService } from '../../services/cart';
+import { OrderService } from '../../services/order';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-checkout',
@@ -24,10 +25,14 @@ export class CheckoutComponent implements OnInit {
   mobile = '';
   address = '';
   pincode = '';
+  orderNumber = '';
+  orderPlaced = false;
+  paymentMethod = 'COD';
 
   constructor(
   private cartService: CartService,
-  private cdr: ChangeDetectorRef
+  private router: Router,
+  private orderService: OrderService
 ) {}
 
   ngOnInit(): void {
@@ -52,15 +57,32 @@ export class CheckoutComponent implements OnInit {
         console.log('Checkout Cart Data:', data);
 
         this.cartItems = [...data];
-        this.cdr.detectChanges();
         console.log('Checkout Items:', this.cartItems);
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Checkout Error:', err);
       }
     });
 }
+removeFromCheckout(cartItemId: number): void {
 
+  this.cartService.removeFromCart(cartItemId).subscribe({
+
+    next: () => {
+
+      this.loadCart();
+
+    },
+
+    error: (err) => {
+
+      console.error(err);
+
+    }
+
+  });
+
+}
   getTotalPrice(): number {
 
     return this.cartItems.reduce(
@@ -74,18 +96,45 @@ export class CheckoutComponent implements OnInit {
 
   placeOrder() {
 
-    if (
-      !this.name ||
-      !this.mobile ||
-      !this.address ||
-      !this.pincode
-    ) {
-      alert('Please fill all fields');
-      return;
-    }
-
-    alert(
-      '🎉 Order Placed Successfully!'
-    );
+  if (
+    !this.name ||
+    !this.mobile ||
+    !this.address ||
+    !this.pincode
+  ) {
+    alert('Please fill all fields');
+    return;
   }
+
+  this.orderService.placeOrder(
+    this.currentUser.id,
+    this.paymentMethod
+)
+.subscribe({
+
+      next: (response: any) => {
+
+        this.orderPlaced = true;
+
+        this.orderNumber = response.orderNumber;
+
+        alert(
+          `🎉 Order Placed Successfully!\n\nOrder Number: ${response.orderNumber}`
+        );
+
+        this.loadCart();
+
+      },
+
+      error: (err) => {
+
+        console.error(err);
+
+        alert(err.error);
+
+      }
+
+    });
+
+}
 }

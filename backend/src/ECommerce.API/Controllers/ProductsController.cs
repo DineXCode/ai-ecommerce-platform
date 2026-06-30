@@ -58,6 +58,28 @@ namespace ECommerce.API.Controllers
                 Message = "Product deleted successfully"
             });
         }
+        // PATCH: api/products/1/restock
+[HttpPatch("{id}/restock")]
+public async Task<IActionResult> Restock(int id, [FromBody] int quantity)
+{
+    var product = await _context.Products.FindAsync(id);
+
+    if (product == null)
+        return NotFound();
+
+    if (quantity <= 0)
+        return BadRequest("Quantity must be greater than 0.");
+
+    product.StockQuantity += quantity;
+    await _context.SaveChangesAsync();
+
+    return Ok(new
+    {
+        message = $"Stock updated successfully.",
+        productId = product.Id,
+        newStock = product.StockQuantity
+    });
+}
         [HttpGet("{id}")]
 public async Task<IActionResult> GetProduct(int id)
 {

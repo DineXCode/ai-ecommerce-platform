@@ -17,16 +17,32 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpGet("{userId}")]
-        public async Task<IActionResult> GetWishlist(
-            int userId)
+public async Task<IActionResult> GetWishlist(int userId)
+{
+    var items = await _context.WishlistItems
+        .Where(x => x.UserId == userId)
+        .Include(x => x.Product)
+        .Select(x => new
         {
-            var items = await _context.WishlistItems
-                .Where(x => x.UserId == userId)
-                .Include(x => x.Product)
-                .ToListAsync();
+            x.Id,
+            x.UserId,
+            x.ProductId,
+            Product = new
+            {
+                x.Product!.Id,
+                x.Product.Name,
+                x.Product.Price,
+                x.Product.Category,
+                x.Product.ImageUrl,
+                x.Product.Description,
+                x.Product.StockQuantity,
+                x.Product.AverageRating
+            }
+        })
+        .ToListAsync();
 
-            return Ok(items);
-        }
+    return Ok(items);
+}
 
         [HttpPost("{userId}/{productId}")]
         public async Task<IActionResult> AddToWishlist(

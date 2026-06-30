@@ -1,0 +1,86 @@
+<div class="wishlist-page container mt-4 mb-5">
+
+  <!-- Header -->
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <h2 class="mb-0">❤️ My Wishlist
+      <span class="badge bg-secondary ms-2">{{ wishlistItems.length }}</span>
+    </h2>
+    <a routerLink="/products" class="btn btn-outline-secondary btn-sm">← Browse Products</a>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="wishlistItems.length === 0" class="empty-wishlist text-center py-5">
+    <div style="font-size: 4rem;">💔</div>
+    <h4 class="text-muted mt-3">Your wishlist is empty</h4>
+    <p class="text-muted">Save products you love and come back to them anytime.</p>
+    <a routerLink="/products" class="btn btn-primary mt-2">Explore Products</a>
+  </div>
+
+  <!-- Wishlist Items -->
+  <div *ngIf="wishlistItems.length > 0">
+
+    <div
+      class="card shadow-sm border-0 mb-3"
+      *ngFor="let item of wishlistItems">
+
+      <div class="card-body">
+        <div class="row align-items-center g-3">
+
+          <!-- Image -->
+          <div class="col-3 col-md-2">
+            <img
+              [src]="item.product?.imageUrl || 'assets/placeholder.png'"
+              [alt]="item.product?.name"
+              class="img-fluid rounded"
+              style="height: 90px; width: 90px; object-fit: cover;">
+          </div>
+
+          <!-- Info -->
+          <div class="col-9 col-md-7">
+            <h5 class="mb-1">{{ item.product?.name }}</h5>
+            <p class="text-muted small mb-2">{{ item.product?.category }}</p>
+
+            <span class="fw-bold text-primary fs-5">₹{{ item.product?.price | number }}</span>
+
+            <!-- Stock Badge -->
+            <div class="mt-2">
+              <span
+                *ngIf="item.product?.stockQuantity > 10"
+                class="badge bg-success">
+                🟢 In Stock
+              </span>
+              <span
+                *ngIf="item.product?.stockQuantity > 0 && item.product?.stockQuantity <= 10"
+                class="badge bg-warning text-dark">
+                🟡 Only {{ item.product?.stockQuantity }} left
+              </span>
+              <span
+                *ngIf="item.product?.stockQuantity === 0"
+                class="badge bg-danger">
+                🔴 Out of Stock
+              </span>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="col-12 col-md-3 d-flex flex-column gap-2 text-md-end">
+            <a
+              [routerLink]="['/product', item.product?.id]"
+              class="btn btn-primary btn-sm">
+              View Product
+            </a>
+            <button
+              class="btn btn-outline-danger btn-sm"
+              (click)="removeWishlist(item.id)">
+              🗑 Remove
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
