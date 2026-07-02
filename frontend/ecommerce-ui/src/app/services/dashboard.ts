@@ -42,4 +42,7 @@ export class DashboardService {
       `${this.apiUrl}/wishlist`
     );
   }
+  getReports() {
+  return this.http.get<any>(`${this.apiUrl}/reports`);
 }
+} 

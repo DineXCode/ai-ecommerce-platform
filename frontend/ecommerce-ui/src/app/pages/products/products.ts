@@ -30,6 +30,7 @@ export class ProductsComponent implements OnInit {
   adminProducts: any[] = [];
   adminCartItems: any[] = [];
   adminWishlist: any[] = [];
+  reports: any = null;
 
   name = '';
   price = 0;
@@ -80,6 +81,18 @@ export class ProductsComponent implements OnInit {
       }
     });
   }
+  showReports(): void {
+  this.selectedView = 'reports';
+  this.dashboardService.getReports().subscribe({
+    next: (data: any) => {
+      this.reports = data;
+      this.cdr.detectChanges();
+    },
+    error: (err) => {
+      console.error('Reports Error:', err);
+    }
+  });
+}
 
   showUsers(): void {
     this.selectedView = 'users';
@@ -319,10 +332,10 @@ export class ProductsComponent implements OnInit {
     }
   });
 }
-// Add these properties at the top with other properties:
+
 restockQuantities: { [productId: number]: number } = {};
 
-// Add this method:
+
 restock(productId: number): void {
   const qty = this.restockQuantities[productId];
 
@@ -351,7 +364,7 @@ restock(productId: number): void {
     });
   }
 
-  // ─── Recommendations ──────────────────────────────────────────────────────
+  // ─── Recommendations ──
 
   showRecommendations(): void {
   if (!this.currentUser) return;

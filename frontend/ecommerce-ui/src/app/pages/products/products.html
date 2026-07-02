@@ -32,28 +32,176 @@
         </div>
       </div>
     </div>
-
     <div class="col-md-3">
-      <div class="card bg-warning shadow" style="cursor:pointer;" (click)="showCartItems()">
-        <div class="card-body text-center">
-          <h5>Cart Items</h5>
-          <h2>{{ dashboard.totalCartItems }}</h2>
+  <div class="card bg-info text-white shadow"
+    style="cursor:pointer;" (click)="showReports()">
+    <div class="card-body text-center">
+      <h5>Reports</h5>
+      <h2>📊</h2>
+    </div>
+  </div>
+</div>
+
+    
+
+  </div>
+
+<!-- ===== ADMIN: REPORTS ===== -->
+<div *ngIf="selectedView === 'reports' && reports" class="mb-4">
+
+  <!-- Sales Summary Cards -->
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm text-center p-3">
+        <p class="text-muted small mb-1">Total Revenue</p>
+        <h4 class="text-success fw-bold">₹{{ reports.totalRevenue | number }}</h4>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm text-center p-3">
+        <p class="text-muted small mb-1">This Month</p>
+        <h4 class="text-primary fw-bold">₹{{ reports.monthlyRevenue | number }}</h4>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm text-center p-3">
+        <p class="text-muted small mb-1">This Week</p>
+        <h4 class="text-info fw-bold">₹{{ reports.weeklyRevenue | number }}</h4>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm text-center p-3">
+        <p class="text-muted small mb-1">Total Orders</p>
+        <h4 class="fw-bold">{{ reports.totalOrders }}</h4>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+
+    <!-- Orders by Status -->
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h5 class="fw-bold mb-3">📋 Orders by Status</h5>
+          <div *ngFor="let s of reports.ordersByStatus"
+            class="d-flex justify-content-between align-items-center mb-2">
+            <span class="badge px-3 py-2"
+              [class.bg-warning]="s.status === 'Pending'"
+              [class.text-dark]="s.status === 'Pending'"
+              [class.bg-info]="s.status === 'Confirmed'"
+              [class.bg-primary]="s.status === 'Shipped'"
+              [class.bg-success]="s.status === 'Delivered'"
+              [class.bg-danger]="s.status === 'Cancelled'">
+              {{ s.status }}
+            </span>
+            <strong>{{ s.count }} orders</strong>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="col-md-3">
-      <div class="card bg-danger text-white shadow" style="cursor:pointer;" (click)="showWishlist()">
-        <div class="card-body text-center">
-          <h5>Wishlist</h5>
-          <h2>{{ dashboard.totalWishlistItems }}</h2>
+    <!-- Account Summary -->
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h5 class="fw-bold mb-3">👥 Account Report</h5>
+          <div class="d-flex justify-content-between mb-3">
+            <span class="text-muted">Total Users</span>
+            <strong>{{ reports.totalUsers }}</strong>
+          </div>
+          <div class="d-flex justify-content-between mb-3">
+            <span class="text-muted">New This Month</span>
+            <strong class="text-success">+{{ reports.newUsersThisMonth }}</strong>
+          </div>
         </div>
       </div>
     </div>
 
   </div>
 
+  <div class="row mb-4">
 
+    <!-- Top Selling Products -->
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h5 class="fw-bold mb-3">🏆 Top Selling Products</h5>
+          <table class="table table-sm">
+            <thead class="table-light">
+              <tr>
+                <th>#</th>
+                <th>Product</th>
+                <th>Sold</th>
+                <th>Revenue</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let p of reports.topProducts; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td>{{ p.productName }}</td>
+                <td><span class="badge bg-success">{{ p.totalSold }}</span></td>
+                <td>₹{{ p.totalRevenue | number }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Revenue by Category -->
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h5 class="fw-bold mb-3">📦 Revenue by Category</h5>
+          <table class="table table-sm">
+            <thead class="table-light">
+              <tr>
+                <th>Category</th>
+                <th>Units Sold</th>
+                <th>Revenue</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of reports.revenueByCategory">
+                <td><span class="badge bg-primary">{{ c.category }}</span></td>
+                <td>{{ c.unitsSold }}</td>
+                <td>₹{{ c.revenue | number }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Top Customers -->
+  <div class="card shadow-sm border-0">
+    <div class="card-body">
+      <h5 class="fw-bold mb-3">👑 Top Customers</h5>
+      <table class="table table-sm">
+        <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>Customer</th>
+            <th>Orders</th>
+            <th>Total Spent</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of reports.topCustomers; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ c.name }}</td>
+            <td>{{ c.totalOrders }}</td>
+            <td class="fw-bold text-success">₹{{ c.totalSpent | number }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
   <!-- ===== ADMIN: ADD PRODUCT FORM ===== -->
   <div *ngIf="isAdmin" class="card shadow-sm mb-4">
     <div class="card-body">
@@ -121,14 +269,14 @@
   </div>
 
 
-  <!-- ===== ADMIN: USERS TABLE ===== -->
+  
 
 
   <!-- ===== ADMIN: INVENTORY MANAGEMENT ===== -->
 <div *ngIf="selectedView === 'products'" class="card shadow mb-4">
   <div class="card-body">
 
-    <h3 class="mb-3">📦 Inventory Management</h3>
+    <h3 class="mb-3"> Inventory Management</h3>
 
     <table class="table table-bordered align-middle">
       <thead class="table-dark">
